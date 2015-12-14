@@ -40,13 +40,44 @@ function get_char(input) {
 
 var c
 var chars_mem = 0
+var e = ''
+var encoded = []
 
-while ((c = get_char(input)) !== null) {
+var input_view = input.slice(0)
+
+while ((c = get_char(input_view)) !== null) {
   if (c !== '\n' && c !== '"') {
     chars_mem++
   }
 
-  input = input.slice(c.length)
+
+
+  input_view = input_view.slice(c.length)
 }
 
+input.forEach(function(c, i){
+  c = to_char(c)
+
+  switch (c) {
+    case '"': e += '\\"'
+    break
+    case '\\': e += '\\\\'
+    break
+    case '\n': break
+    default: e += c
+  }
+
+  if (c == '\n' || i == input.length - 1) {
+    e = '"' + e + '"'
+    encoded.push(e)
+    e = ''
+  }
+})
+
+
+var encoded_count = encoded.reduce(function (prev, el) {
+  return prev + el.length
+}, 0)
+
 console.log(`Code characters: ${chars_code}. Memory characters: ${chars_mem}. Diff: ${chars_code - chars_mem}.`)
+console.log(`Re-encoded thingy: ${encoded_count - chars_code}`)
